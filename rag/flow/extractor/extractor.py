@@ -38,6 +38,24 @@ class Extractor(ProcessBase, LLM):
     component_name = "Extractor"
 
     async def _build_TOC(self, docs):
+        """Generate TOC from text chunks with text llms.
+    
+        Args:
+            docs: List[Dict]: List of chunks of a document.
+                  Each chunk is a dict that should contain either keys "page_num_int" or "top_int" for the function to work.
+    
+        Returns:
+            Dict: Structure:
+            {
+                "doc_id": Format of Document
+                "content_with_weight": Table of Contents as string
+                "toc_kwd": "toc"
+                "available_int": 0
+                "page_num_int": [100000000]
+                "id": ID of structure, hashed from concatenating "content_with_weight" with "doc_id"
+            }
+        """
+
         self.callback(0.2,message="Start to generate table of content ...")
         docs = sorted(docs, key=lambda d:(
             d.get("page_num_int", 0)[0] if isinstance(d.get("page_num_int", 0), list) else d.get("page_num_int", 0),
