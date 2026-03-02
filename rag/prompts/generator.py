@@ -748,8 +748,22 @@ TOC_FROM_TEXT_SYSTEM = load_prompt("toc_from_text_system")
 TOC_FROM_TEXT_USER = load_prompt("toc_from_text_user")
 
 
-# Generate TOC from text chunks with text llms
 async def gen_toc_from_text(txt_info: dict, chat_mdl, callback=None):
+    """Generate TOC from text chunks with text llms.
+
+    Args:
+        txt_info: Chunks of the original document.
+        chat_mdl: LLM Model used to generate TOC table.
+        callback: Progress reporting function to update progress bars. (defaults to None).
+
+    Returns:
+        List[Dict[]]: List of dicts, each dict representing a TOC header, having the structure of:
+        {
+            "level": Table of Contents header level,
+            "title": Title of Header,
+            "chunk_id": Chunk ID of first chunk text associated with Header,
+        }
+    """
     if callback:
         callback(msg="")
     try:
@@ -787,6 +801,23 @@ def split_chunks(chunks, max_length: int):
 
 
 async def run_toc_from_text(chunks, chat_mdl, callback=None):
+    """Turns source document chunks into a Table of Contents data structure.
+
+    This is so the RAG can more efficiently and effectively extract meaningful information from documents.
+
+    Args:
+        chunks: Chunks of the original document.
+        chat_mdl: LLM Model used to generate TOC table.
+        callback: Progress reporting function to update progress bars. (defaults to None).
+
+    Returns:
+        List[Dict[]]: List of dicts, each dict representing a TOC header, having the structure of:
+        {
+            "level": Table of Contents header level,
+            "title": Title of Header,
+            "chunk_id": Chunk ID of first chunk text associated with Header,
+        }
+    """
     input_budget = int(chat_mdl.max_length * INPUT_UTILIZATION) - num_tokens_from_string(
         TOC_FROM_TEXT_USER + TOC_FROM_TEXT_SYSTEM
     )
