@@ -176,6 +176,22 @@ class Dealer:
 
     def insert_citations(self, answer, chunks, chunk_v,
                          embd_mdl, tkweight=0.1, vtweight=0.9):
+        """Inserts citations into answer from source chunks.
+    
+        Parameters
+        ----------
+        answer   -- string generated from LLM via Chunks
+        chunks   -- chunks used to generate answer
+        chunk_v  -- vector embedding representation of each chunk
+        embd_mdl -- model used to create vector embeddings
+        tkweight -- influence of keywords on determining which chunk corresponds to a sentence in answer.
+        vtweight -- influence of vectors on determining which chunk corresponds to a sentence in answer.
+
+        Returns
+        ----------
+        res      -- answer parameter but each sentence has citations for information extracted from corresponding chunk.
+        seted    -- set of all chunks cited in sentence.
+        """
         assert len(chunks) == len(chunk_v)
         if not chunks:
             return answer, set([])
